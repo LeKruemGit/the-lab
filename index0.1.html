@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE LAB - DRAGGABLE OS</title>
+    <link rel="stylesheet" href="https://unpkg.com/98.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0a0a0a;
+            /* Underground Grid */
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            font-family: "MS Sans Serif", Arial, sans-serif;
+        }
+
+       /* 1. INDUSTRIAL BUTTON CONTAINER */
+#floating-menu {
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    z-index: 1000;
+}
+
+/* 2. THE MACHINE BUTTON */
+.industrial-btn {
+    /* The "Frame" of the button */
+    background: linear-gradient(135deg, #444, #222);
+    color: #0D0045; /* Blue backlight color */
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    font-size: 14px;
+    text-align: left;
+    padding: 12px 20px;
+    cursor: pointer;
+    text-transform: uppercase;
+    
+    /* Industrial 3D Border */
+    border-top: 4px solid #888;
+    border-left: 4px solid #888;
+    border-bottom: 4px solid #000;
+    border-right: 4px solid #000;
+    
+    /* The Blue Backlight Glow */
+    box-shadow: 
+        0 0 10px rgba(13, 0, 69, 0.3), /* Soft outer glow */
+        inset 0 0 8px rgba(13, 0, 69, 0.5); /* Internal light glow */
+        
+    text-shadow: 0 0 5px #00d9ff;
+    transition: all 0.1s;
+    width: 180px;
+}
+
+/* 3. THE "PRESSED" EFFECT */
+.industrial-btn:active {
+    /* Switch the borders to make it look pushed in */
+    border-top: 4px solid #000;
+    border-left: 4px solid #000;
+    border-bottom: 4px solid #888;
+    border-right: 4px solid #888;
+    
+    /* Brighten the backlight when pressed */
+    box-shadow: 
+        0 0 20px rgba(0, 217, 255, 0.8), 
+        inset 0 0 15px rgba(0, 217, 255, 1);
+    
+    transform: translateY(2px);
+}
+
+/* 4. HOVER STATE */
+.industrial-btn:hover {
+    filter: brightness(1.2);
+    box-shadow: 
+        0 0 15px rgba(0, 217, 255, 0.6), 
+        inset 0 0 10px rgba(0, 217, 255, 0.6);
+}
+
+        /* 2. DRAGGABLE WINDOWS */
+        .window {
+            position: absolute; /* Needed for dragging */
+            width: 350px;
+            display: none;
+            z-index: 10;
+            cursor: default;
+        }
+
+        .window.active {
+            display: block;
+        }
+
+        .title-bar {
+            cursor: grab; /* Shows user they can move it */
+        }
+
+        .title-bar:active {
+            cursor: grabbing;
+        }
+
+        .window-body {
+            background: #c0c0c0;
+            min-height: 100px;
+        }
+
+        /* Neon Label for the Shop */
+        .neon-green { color: #39ff14; text-shadow: 0 0 5px #39ff14; }
+    </style>
+</head>
+<body>
+
+    <div id="floating-menu">
+        <div style="color: white; font-size: 10px; margin-bottom: 5px;">[ SYSTEM_ACCESS ]</div>
+        <button class="industrial-btn" onclick="openWindow('win-bio')">01_PROFILE</button>
+        <button class="industrial-btn" onclick="openWindow('win-garage')">02_GARAGE</button>
+        <button class="industrial-btn" onclick="openWindow('win-shop')">03_MARKET</button>
+	<button class="industrial-btn" onclick="openWindow('win-blog')">04_LOGS</button>
+    </div>
+
+    <div class="window" id="win-bio" style="top: 100px; left: 300px;">
+        <div class="title-bar">
+            <div class="title-bar-text">Driver_Bio.exe</div>
+            <div class="title-bar-controls">
+                <button aria-label="Close" onclick="closeWindow('win-bio')"></button>
+            </div>
+        </div>
+        <div class="window-body">
+            <p>NAME: <span class="neon-green">THE SCIENTIST</span></p>
+            <p>STATUS: TUNING IN PROGRESS...</p>
+        </div>
+    </div>
+
+    <div class="window" id="win-garage" style="top: 250px; left: 400px;">
+        <div class="title-bar">
+            <div class="title-bar-text">Garage_Cam_01.jpg</div>
+            <div class="title-bar-controls">
+                <button aria-label="Close" onclick="closeWindow('win-garage')"></button>
+            </div>
+        </div>
+        <div class="window-body">
+            <div style="background:#000; height:150px; border:2px inset #fff;"></div>
+            <p>Camera feed offline.</p>
+        </div>
+    </div>
+
+<div class="window" id="win-blog" style="top: 150px; left: 200px; width: 450px;">
+    <div class="title-bar">
+        <div class="title-bar-text">Dev_Log_Entry_01.txt - Notepad</div>
+        <div class="title-bar-controls">
+            <button aria-label="Close" onclick="closeWindow('win-blog')"></button>
+        </div>
+    </div>
+    
+    <div class="window-body" style="padding: 0;">
+        <div style="padding: 2px 10px; border-bottom: 1px solid #808080; font-size: 11px;">
+            File &nbsp; Edit &nbsp; Search &nbsp; Help
+        </div>
+        
+        <div style="background: #fff; padding: 15px; color: #000; font-family: 'Courier New', Courier, monospace; line-height: 1.4;">
+            <p style="margin-bottom: 10px; border-bottom: 1px dashed #000;">DATE: JAN 17, 2026 | SUBJECT: PROJECT_START</p>
+            
+            <h3 style="margin-top: 0;">How I Started This Lab...</h3>
+            
+            <p>I wanted to build a place that didn't look like every other boring website. I missed the old web—where everything was custom and felt like a secret base.</p>
+            
+            <p>First, I chose the <b>Windows 98 aesthetic</b> because it feels like using an actual computer from the golden era of car tuning games.</p>
+            
+            <p>I added a <b>loading screen</b> inspired by 2000s racing games to give it that "Underground" atmosphere. Now, I'm working on making the windows move so users can organize their own workspace in my lab.</p>
+            
+            <p style="text-align: center;">*** END OF LOG ***</p>
+        </div>
+    </div>
+</div>
+
+    <div class="window" id="win-shop" style="top: 150px; left: 500px;">
+        <div class="title-bar">
+            <div class="title-bar-text">Marketplace_Beta.sys</div>
+            <div class="title-bar-controls">
+                <button aria-label="Close" onclick="closeWindow('win-shop')"></button>
+            </div>
+        </div>
+        <div class="window-body">
+            <p>Future Shop Capability:</p>
+            <ul class="tree-view">
+                <li>Turbo Charger Ver 2.0</li>
+                <li>Carbon Fiber Kit</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 1. OPEN / CLOSE LOGIC
+        function openWindow(id) {
+            const win = document.getElementById(id);
+            win.classList.add('active');
+            bringToFront(win);
+        }
+
+        function closeWindow(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function bringToFront(win) {
+            document.querySelectorAll('.window').forEach(w => w.style.zIndex = "10");
+            win.style.zIndex = "100";
+        }
+
+        // 2. DRAGGING LOGIC
+        document.querySelectorAll('.window').forEach(win => {
+            const titleBar = win.querySelector('.title-bar');
+            
+            titleBar.onmousedown = function(event) {
+                bringToFront(win);
+                
+                let shiftX = event.clientX - win.getBoundingClientRect().left;
+                let shiftY = event.clientY - win.getBoundingClientRect().top;
+
+                function moveAt(pageX, pageY) {
+                    win.style.left = pageX - shiftX + 'px';
+                    win.style.top = pageY - shiftY + 'px';
+                }
+
+                function onMouseMove(event) {
+                    moveAt(event.pageX, event.pageY);
+                }
+
+                document.addEventListener('mousemove', onMouseMove);
+
+                document.onmouseup = function() {
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.onmouseup = null;
+                };
+            };
+
+            titleBar.ondragstart = function() {
+                return false;
+            };
+        });
+    </script>
+</body>
+</html>

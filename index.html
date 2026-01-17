@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE LAB - DRAGGABLE OS</title>
+    <link rel="stylesheet" href="https://unpkg.com/98.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0a0a0a;
+            /* Underground Grid */
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            font-family: "MS Sans Serif", Arial, sans-serif;
+        }
+
+        /* INDUSTRIAL BUTTON CONTAINER */
+        #floating-menu {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        /* THE MACHINE BUTTON */
+        .industrial-btn {
+            background: linear-gradient(135deg, #444, #222);
+            color: #00d9ff; /* Bright Cyan text for readability */
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: left;
+            padding: 12px 20px;
+            cursor: pointer;
+            text-transform: uppercase;
+            border-top: 4px solid #888;
+            border-left: 4px solid #888;
+            border-bottom: 4px solid #000;
+            border-right: 4px solid #000;
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.3), inset 0 0 8px rgba(0, 217, 255, 0.3);
+            text-shadow: 0 0 5px #00d9ff;
+            transition: all 0.1s;
+            width: 180px;
+        }
+
+        .industrial-btn:active {
+            border-top: 4px solid #000;
+            border-left: 4px solid #000;
+            border-bottom: 4px solid #888;
+            border-right: 4px solid #888;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.8), inset 0 0 15px rgba(0, 217, 255, 1);
+            transform: translateY(2px);
+        }
+
+        .industrial-btn:hover {
+            filter: brightness(1.2);
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.6), inset 0 0 10px rgba(0, 217, 255, 0.6);
+        }
+
+        /* DRAGGABLE WINDOWS */
+        .window {
+            position: absolute;
+            width: 350px;
+            display: none;
+            z-index: 10;
+            cursor: default;
+            opacity: 0.96; /* Subtle holographic transparency */
+        }
+
+        .window.active {
+            display: block;
+        }
+
+        .title-bar {
+            cursor: grab;
+        }
+
+        .title-bar:active {
+            cursor: grabbing;
+        }
+
+        .window-body {
+            background: #c0c0c0;
+            min-height: 100px;
+        }
+
+        .neon-green { color: #39ff14; text-shadow: 0 0 5px #39ff14; }
+    </style>
+</head>
+<body>
+
+    <div id="floating-menu">
+        <div style="color: white; font-size: 10px; margin-bottom: 5px;">[ SYSTEM_ACCESS ]</div>
+        <button class="industrial-btn" onclick="openWindow('win-bio')">01_PROFILE</button>
+        <button class="industrial-btn" onclick="openWindow('win-garage')">02_GARAGE</button>
+        <button class="industrial-btn" onclick="openWindow('win-shop')">03_MARKET</button>
+        <button class="industrial-btn" onclick="openWindow('win-blog')">04_LOGS</button>
+        <button class="industrial-btn" onclick="openWindow('win-space')" style="color: #ffaa00; text-shadow: 0 0 5px #ffaa00; box-shadow: 0 0 10px rgba(255, 170, 0, 0.3);">05_SATELLITE</button>
+    </div>
+
+    <div class="window" id="win-bio" style="top: 100px; left: 300px;">
+        <div class="title-bar">
+            <div class="title-bar-text">Driver_Bio.exe</div>
+            <div class="title-bar-controls">
+                <button aria-label="Close" onclick="closeWindow('win-bio')"></button>
+            </div>
+        </div>
+        <div class="window-body">
+            <p>NAME: <span class="neon-green">THE SCIENTIST</span></p>
+            <p>STATUS: TUNING IN PROGRESS...</p>
+        </div>
+    </div>
+
+    <div class="window" id="win-garage" style="top: 250px; left: 400px;">
+        <div class="title-bar">
+            <div class="title-bar-text">Garage_Cam_01.jpg</div>
+            <div class="title-bar-controls">
+                <button aria-label="Close" onclick="closeWindow('win-garage')"></button>
+            </div>
+        </div>
+        <div class="window-body">
+            <div style="background:#000; height:150px; border:2px inset #fff;"></div>
+            <p>Camera feed offline.</p>
+        </div>
+    </div>
+
+    <div class="window" id="win-blog" style="top: 150px; left: 200px; width: 450px;">
+        <div class="title-bar">
+            <div class="title-bar-text">Dev_Log_Entry_01.txt - Notepad</div>
+            <div class="title-bar-controls">
+                <button aria-label="Close" onclick="closeWindow('win-blog')"></button>
+            </div>
+        </div>
+        <div class="window-body" style="padding: 0;">
+            <div style="padding: 2px 10px; border-bottom: 1px solid #808080; font-size: 11px;">File &nbsp; Edit &nbsp; Search &nbsp; Help</div>
+            <div style="background: #fff; padding: 15px; color: #000; font-family: 'Courier New', Courier, monospace; line-height: 1.4;">
+                <p style="margin-bottom: 10px; border-bottom: 1px dashed #000;">DATE: JAN 17, 2026 | SUBJECT: PROJECT_START</p>
+                <h3 style="margin-top: 0;">How I Started This Lab...</h3>
+                <p>I wanted to build a place that felt like a secret base. I chose the Windows 98 aesthetic to match the vibe of 2000s tuning games.</p>
+                <div style="text-align: center; margin: 15px 0;">
+                    <img src="https://via.placeholder.com/350x180" alt="Lab" style="border: 2px inset #808080; width: 100%; filter: hue-rotate(140deg) brightness(1.2);">
+                    <p style="font-size: 10px; color: #666;">[ATTACHMENT: LAB_PROGRESS_01.JPG]</p>
+                </div>
+                <p style="text-align: center;">*** END OF LOG ***</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="window" id="win-shop" style="top: 150px; left: 500px;">
+        <div class="title-bar">
+            <div class="title-bar-text">Marketplace_Beta.sys</div>
+            <div class="title-bar-controls">
+                <button aria-label="Close" onclick="closeWindow('win-shop')"></button>
+            </div>
+        </div>
+        <div class="window-body">
+            <p>Future Shop Capability:</p>
+            <ul class="tree-view">
+                <li>Turbo Charger Ver 2.0</li>
+                <li>Carbon Fiber Kit</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="window" id="win-space" style="top: 80px; left: 600px; width: 550px;">
+        <div class="title-bar">
+            <div class="title-bar-text">Satellite_Uplink_v2.2.sys</div>
+            <div class="title-bar-controls">
+                <button aria-label="Close" onclick="closeWindow('win-space')"></button>
+            </div>
+        </div>
+        <div class="window-body" style="padding: 10px; background: #000; color: #00d9ff; font-family: monospace;">
+            
+            <div style="margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; display: flex; justify-content: space-between;">
+                <span>> RECEIVING REAL-TIME DATA...</span>
+                <span id="live-clock" style="color: #ffaa00;">00:00:00</span>
+            </div>
+
+            <div style="margin-bottom: 15px; cursor: pointer;" onclick="window.open('https://www.spaceweatherlive.com/de/auroraaktivitat/kp-index.html', '_blank')">
+                <p style="font-size: 10px; margin-bottom: 5px;">[ CHANNEL_01: GEOMAGNETIC_ACTIVITY (Kp) ]</p>
+                <img id="img-kp" src="https://www.spaceweatherlive.com/images/widgets/kp-index.php" 
+                     style="width: 100%; filter: invert(1) hue-rotate(180deg) brightness(1.2) contrast(1.5); border: 1px solid #00d9ff;">
+            </div>
+            
+            <div style="margin-bottom: 15px; cursor: pointer;" onclick="window.open('https://www.spaceweatherlive.com/de/sonnenaktivitat/sonnenflares.html', '_blank')">
+                <p style="font-size: 10px; margin-bottom: 5px;">[ CHANNEL_02: SOLAR_FLARE_MONITOR (X-Ray) ]</p>
+                <img id="img-flare" src="https://www.spaceweatherlive.com/images/widgets/solar-flares.php" 
+                     style="width: 100%; filter: invert(1) hue-rotate(180deg) brightness(1.2) contrast(1.5); border: 1px solid #00d9ff;">
+            </div>
+
+            <div class="status-bar" style="background: #c0c0c0; color: #000;">
+                <p class="status-bar-field">SYNC: ACTIVE</p>
+                <p class="status-bar-field" id="last-update">LOADED</p>
+                <button onclick="refreshSatelliteData()" style="height: 14px; font-size: 9px; margin: 1px; padding: 0 5px;">RE-SCAN</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+		
+        function openWindow(id) {
+            const win = document.getElementById(id);
+            win.classList.add('active');
+            bringToFront(win);
+        }
+
+        function closeWindow(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function bringToFront(win) {
+            document.querySelectorAll('.window').forEach(w => w.style.zIndex = "10");
+            win.style.zIndex = "100";
+        }
+
+        document.querySelectorAll('.window').forEach(win => {
+            const titleBar = win.querySelector('.title-bar');
+            titleBar.onmousedown = function(event) {
+                bringToFront(win);
+                let shiftX = event.clientX - win.getBoundingClientRect().left;
+                let shiftY = event.clientY - win.getBoundingClientRect().top;
+                function moveAt(pageX, pageY) {
+                    win.style.left = pageX - shiftX + 'px';
+                    win.style.top = pageY - shiftY + 'px';
+                }
+                function onMouseMove(event) { moveAt(event.pageX, event.pageY); }
+                document.addEventListener('mousemove', onMouseMove);
+                document.onmouseup = function() {
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.onmouseup = null;
+                };
+            };
+            titleBar.ondragstart = function() { return false; };
+        });
+		function refreshSatelliteData() {
+    // Verhindert das Laden aus dem Browser-Cache
+    const timestamp = new Date().getTime();
+    document.getElementById('img-kp').src = "https://www.spaceweatherlive.com/images/widgets/kp-index.php?t=" + timestamp;
+    document.getElementById('img-flare').src = "https://www.spaceweatherlive.com/images/widgets/solar-flares.php?t=" + timestamp;
+    
+    const now = new Date();
+    document.getElementById('last-update').innerText = "UPDATED: " + now.getHours() + ":" + now.getMinutes();
+}
+
+// Eine kleine Uhr für das Fenster-Gefühl
+setInterval(() => {
+    const now = new Date();
+    const timeStr = now.getHours().toString().padStart(2, '0') + ":" + 
+                    now.getMinutes().toString().padStart(2, '0') + ":" + 
+                    now.getSeconds().toString().padStart(2, '0');
+    if(document.getElementById('live-clock')) {
+        document.getElementById('live-clock').innerText = timeStr;
+    }
+}, 1000);
+    </script>
+</body>
+</html>
